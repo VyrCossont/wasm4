@@ -23,7 +23,15 @@ void w4_windowBoot (const char* title) {
 
     mfb_set_resize_callback(window, onResize);
 
+    struct mfb_timer* frameTimer = mfb_timer_create();
+
     do {
+        double missedFrames = (mfb_timer_delta(frameTimer) * 60.0) - 1;
+        if (missedFrames > UINT8_MAX) {
+            missedFrames = UINT8_MAX;
+        }
+        w4_runtimeSetMissedFrames((uint8_t) missedFrames);
+
         // Keyboard handling
         const uint8_t* keyBuffer = mfb_get_key_buffer(window);
 
@@ -93,6 +101,8 @@ void w4_windowBoot (const char* title) {
             break;
         }
     } while (mfb_wait_sync(window));
+
+    mfb_timer_destroy(frameTimer);
 }
 
 void w4_windowComposite (const uint32_t* palette, const uint8_t* framebuffer) {

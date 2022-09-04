@@ -24,6 +24,7 @@ void w4_runtimeInit (uint8_t* memory, w4_Disk* disk);
 
 void w4_runtimeSetGamepad (int idx, uint8_t gamepad);
 void w4_runtimeSetMouse (int16_t x, int16_t y, uint8_t buttons);
+void w4_runtimeSetMissedFrames (uint8_t missedFrames);
 
 void w4_runtimeBlit (const uint8_t* sprite, int x, int y, int width, int height, int flags);
 void w4_runtimeBlitSub (const uint8_t* sprite, int x, int y, int width, int height, int srcX, int srcY, int stride, int flags);

@@ -23,7 +23,9 @@ typedef struct {
     int16_t mouseY;
     uint8_t mouseButtons;
     uint8_t systemFlags;
-    uint8_t _reserved[128];
+    uint8_t _netplay;
+    uint8_t missedFrames;
+    uint8_t _reserved[126];
     uint8_t framebuffer[WIDTH*HEIGHT>>2];
     uint8_t _user[58976];
 } Memory;
@@ -66,6 +68,10 @@ void w4_runtimeSetMouse (int16_t x, int16_t y, uint8_t buttons) {
     w4_write16LE(&memory->mouseX, x);
     w4_write16LE(&memory->mouseY, y);
     memory->mouseButtons = buttons;
+}
+
+void w4_runtimeSetMissedFrames (uint8_t missedFrames) {
+    memory->missedFrames = missedFrames;
 }
 
 void w4_runtimeBlit (const uint8_t* sprite, int x, int y, int width, int height, int flags) {
