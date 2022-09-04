@@ -15,6 +15,8 @@ static GLuint paletteLocation;
 // the window was forced to a non-square resolution
 static int contentX, contentY, contentSize;
 
+static double previousFrameTimestamp;
+
 static void initLookupTable () {
     // Create a lookup table for each byte mapping to 4 bytes:
     // 0bxxyyzzww --> 0bxx000000_yy000000_zz000000_ww000000
@@ -204,9 +206,18 @@ void w4_windowBoot (const char* title) {
     initOpenGL();
     initLookupTable();
 
+    previousFrameTimestamp = glfwGetTime();
+
     while (!glfwWindowShouldClose(window)) {
         double timeStart = glfwGetTime();
         double timeEnd = timeStart + 1.0/60.0;
+
+        double missedFrames = ((timeStart - previousFrameTimestamp) * 60.0) - 1;
+        previousFrameTimestamp = timeStart;
+        if (missedFrames > UINT8_MAX) {
+            missedFrames = UINT8_MAX;
+        }
+        w4_runtimeSetMissedFrames((uint8_t) missedFrames);
 
         update(window);
         glfwSwapBuffers(window);
