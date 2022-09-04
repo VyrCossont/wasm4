@@ -56,6 +56,14 @@ static void audio_callback () {
 }
 #endif
 
+static void frame_time_callback(retro_usec_t usec) {
+    retro_usec_t missedFrames = ((usec * 60) / usec) - 1;
+    if (missedFrames > UINT8_MAX) {
+        missedFrames = UINT8_MAX;
+    }
+    w4_runtimeSetMissedFrames(missedFrames);
+}
+
 unsigned retro_api_version () {
     return RETRO_API_VERSION;
 }
@@ -332,6 +340,9 @@ bool retro_load_game (const struct retro_game_info* game) {
     if (!use_audio_callback) {
 	log_cb(RETRO_LOG_INFO, "Using normal audio\n");
     }
+
+    struct retro_frame_time_callback frame_cb = { frame_time_callback, 1000000 / 60 };
+    environ_cb(RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK, &frame_cb);
 
     return true;
 }
